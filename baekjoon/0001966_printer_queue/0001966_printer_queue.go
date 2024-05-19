@@ -24,33 +24,33 @@ func CalcPrintOrder(priorities []int, idx int, iterCount int) (int, error) {
 		return 0, ErrEmptyPriorities
 	}
 
-	if len(priorities) == 1 {
-		return iterCount + 1, nil
-	}
-
-	firstPrior := priorities[0]
-
-	hasMorePrior := slices.ContainsFunc(priorities[1:], func(p int) bool {
-		return p > firstPrior
-	})
-	if !hasMorePrior {
-		if idx == 0 {
+	for {
+		if len(priorities) == 1 {
 			return iterCount + 1, nil
+		}
+
+		firstPrior := priorities[0]
+
+		hasMorePrior := slices.ContainsFunc(priorities[1:], func(p int) bool {
+			return p > firstPrior
+		})
+		if !hasMorePrior {
+			if idx == 0 {
+				return iterCount + 1, nil
+			} else {
+				idx--
+				priorities = priorities[1:]
+				iterCount++
+			}
 		} else {
-			idx--
-			return CalcPrintOrder(priorities[1:], idx, iterCount+1)
+			priorities = append(priorities[1:], firstPrior)
+			if idx == 0 {
+				idx = len(priorities) - 1
+			} else {
+				idx--
+			}
 		}
 	}
-
-	priorities = append(priorities[1:], firstPrior)
-
-	if idx == 0 {
-		idx = len(priorities) - 1
-	} else {
-		idx--
-	}
-
-	return CalcPrintOrder(priorities, idx, iterCount)
 }
 
 var (
