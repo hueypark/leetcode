@@ -6,7 +6,15 @@ import (
 )
 
 func main() {
+	ins := readInputs()
+	for _, in := range ins {
+		printOrder, err := CalcPrintOrder(in.Priorities, in.Index, 0)
+		if err != nil {
+			panic(err)
+		}
 
+		fmt.Println(printOrder)
+	}
 }
 
 func CalcPrintOrder(priorities []int, idx int, iterCount int) (int, error) {
@@ -41,4 +49,32 @@ func CalcPrintOrder(priorities []int, idx int, iterCount int) (int, error) {
 	}
 
 	return CalcPrintOrder(priorities, idx, iterCount)
+}
+
+type Input struct {
+	Priorities []int
+	Index      int
+}
+
+func readInputs() []Input {
+	var inLen int
+	fmt.Scan(&inLen)
+
+	ins := make([]Input, inLen)
+	for i := 0; i < inLen; i++ {
+		var n, idx int
+		fmt.Scan(&n, &idx)
+
+		priorities := make([]int, n)
+		for j := 0; j < n; j++ {
+			fmt.Scan(&priorities[j])
+		}
+
+		ins[i] = Input{
+			Priorities: priorities,
+			Index:      idx,
+		}
+	}
+
+	return ins
 }
