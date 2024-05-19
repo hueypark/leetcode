@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 )
@@ -10,7 +11,8 @@ func main() {
 	for _, in := range ins {
 		printOrder, err := CalcPrintOrder(in.Priorities, in.Index, 0)
 		if err != nil {
-			panic(err)
+			fmt.Printf("%v\n", err)
+			continue
 		}
 
 		fmt.Println(printOrder)
@@ -19,7 +21,7 @@ func main() {
 
 func CalcPrintOrder(priorities []int, idx int, iterCount int) (int, error) {
 	if len(priorities) == 0 {
-		return 0, fmt.Errorf("priorities is empty")
+		return 0, ErrEmptyPriorities
 	}
 
 	if len(priorities) == 1 {
@@ -50,6 +52,10 @@ func CalcPrintOrder(priorities []int, idx int, iterCount int) (int, error) {
 
 	return CalcPrintOrder(priorities, idx, iterCount)
 }
+
+var (
+	ErrEmptyPriorities = errors.New("empty priorities")
+)
 
 type Input struct {
 	Priorities []int

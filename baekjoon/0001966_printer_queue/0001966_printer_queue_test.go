@@ -11,7 +11,14 @@ func TestPrintOrder(t *testing.T) {
 		priorities []int
 		idx        int
 		printOrder int
+		err        error
 	}{
+		{
+			priorities: []int{},
+			idx:        0,
+			printOrder: 0,
+			err:        ErrEmptyPriorities,
+		},
 		{
 			priorities: []int{5},
 			idx:        0,
@@ -31,7 +38,7 @@ func TestPrintOrder(t *testing.T) {
 
 	for _, tc := range tcs {
 		printOrder, err := CalcPrintOrder(tc.priorities, tc.idx, 0)
-		require.NoError(t, err)
+		require.Equal(t, tc.err, err)
 		require.Equal(t, tc.printOrder, printOrder, "priorities: %v, idx: %d", tc.priorities, tc.idx)
 	}
 
