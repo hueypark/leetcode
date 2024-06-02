@@ -114,6 +114,91 @@ func TestWinter(t *testing.T) {
 	}
 }
 
+func TestTreeCountAfterNYears(t *testing.T) {
+	tcs := []struct {
+		landSize      int
+		fertilizers   [][]int
+		trees         []Tree
+		year          int
+		expectedCount int
+	}{
+		{
+			landSize: 1,
+			fertilizers: [][]int{
+				{1},
+			},
+			trees:         []Tree{{Location: Vector{0, 0}, Age: 1}},
+			year:          1,
+			expectedCount: 1,
+		},
+		{
+			landSize: 1,
+			fertilizers: [][]int{
+				{1},
+			},
+			trees:         []Tree{{Location: Vector{0, 0}, Age: 1}},
+			year:          4,
+			expectedCount: 0,
+		},
+		{
+			landSize: 5,
+			fertilizers: [][]int{
+				{2, 3, 2, 3, 2},
+				{2, 3, 2, 3, 2},
+				{2, 3, 2, 3, 2},
+				{2, 3, 2, 3, 2},
+				{2, 3, 2, 3, 2},
+			},
+			trees:         []Tree{{Location: Vector{1, 0}, Age: 3}, {Location: Vector{2, 1}, Age: 3}},
+			year:          1,
+			expectedCount: 2,
+		},
+		{
+			landSize: 5,
+			fertilizers: [][]int{
+				{2, 3, 2, 3, 2},
+				{2, 3, 2, 3, 2},
+				{2, 3, 2, 3, 2},
+				{2, 3, 2, 3, 2},
+				{2, 3, 2, 3, 2},
+			},
+			trees:         []Tree{{Location: Vector{1, 0}, Age: 3}, {Location: Vector{2, 1}, Age: 3}},
+			year:          6,
+			expectedCount: 85,
+		},
+		{
+			landSize: 10,
+			fertilizers: [][]int{
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+				{100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+			},
+			trees:         []Tree{{Location: Vector{1, 1}, Age: 1}},
+			year:          1000,
+			expectedCount: 5258,
+		},
+	}
+
+	for _, tc := range tcs {
+		land := make(map[Vector]int)
+		for x := range tc.landSize {
+			for y := range tc.landSize {
+				land[Vector{x, y}] = 5
+			}
+		}
+
+		count := treeCountAfterNYears(tc.trees, tc.landSize, land, tc.fertilizers, tc.year)
+		require.Equal(t, tc.expectedCount, count, "Tree count after %d years did not match expected value", tc.year)
+	}
+}
+
 func sortTree(trees []Tree) []Tree {
 	sort.Slice(trees, func(i, j int) bool {
 		if trees[i].Location.X == trees[j].Location.X {

@@ -15,14 +15,10 @@ type Vector struct {
 	Y int
 }
 
-func spring(trees []Tree, land map[Vector]int) ([]Tree, []Tree) {
-	var deadTrees []Tree
-	sort.Slice(trees, func(i, j int) bool {
-		return trees[i].Age < trees[j].Age
-	})
+func spring(sortedTrees []Tree, land map[Vector]int) ([]Tree, []Tree) {
+	var aliveTrees, deadTrees []Tree
+	for _, t := range sortedTrees {
 
-	var aliveTrees []Tree
-	for _, t := range trees {
 		vec := t.Location
 		if land[vec] >= t.Age {
 			land[vec] -= t.Age
@@ -70,6 +66,24 @@ func winter(land map[Vector]int, fertilizers [][]int) {
 	}
 }
 
+func treeCountAfterNYears(trees []Tree, landSize int, land map[Vector]int, fertilizers [][]int, year int) int {
+	sort.Slice(trees, func(i, j int) bool {
+		return trees[i].Age < trees[j].Age
+	})
+
+	var deadTrees []Tree
+	for i := 0; i < year; i++ {
+		trees, deadTrees = spring(trees, land)
+		summer(deadTrees, land)
+		newTrees := fall(trees, landSize)
+
+		trees = append(newTrees, trees...)
+		winter(land, fertilizers)
+	}
+
+	return len(trees)
+}
+
 func main() {
 	var N, M, K int
 	fmt.Scanf("%d %d %d", &N, &M, &K)
@@ -96,15 +110,5 @@ func main() {
 		trees[i] = Tree{Location: Vector{x - 1, y - 1}, Age: age}
 	}
 
-	var deadTrees []Tree
-	for year := 0; year < K; year++ {
-		trees, deadTrees = spring(trees, land)
-		summer(deadTrees, land)
-		newTrees := fall(trees, N)
-
-		trees = append(trees, newTrees...)
-		winter(land, fertilizers)
-	}
-
-	fmt.Println(len(trees))
+	fmt.Println(treeCountAfterNYears(trees, N, land, fertilizers, K))
 }
